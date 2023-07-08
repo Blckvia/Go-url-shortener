@@ -1,0 +1,6 @@
+env: 'local'
+storage_pass: './storage/storage.db'
+http-server:
+  address: 'localhost:8082'
+  timeout: 4s
+  idle_timeout: 60s
