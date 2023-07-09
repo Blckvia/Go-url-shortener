@@ -2,10 +2,13 @@ package main
 
 import (
 	"Projects/go-url-shortener/cmd/internal/config"
+	mwLogger "Projects/go-url-shortener/cmd/internal/http-server/middleware/logger"
 	"Projects/go-url-shortener/cmd/internal/lib/logger/sl"
 	"Projects/go-url-shortener/cmd/internal/storage/sqlite"
 	"os"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"golang.org/x/exp/slog"
 )
 
@@ -28,8 +31,14 @@ func main() {
 		log.Error("failed to init storage", sl.Err(err))
 		os.Exit(1)
 	}
-	
+
 	_ = storage
+
+	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID)
+	router.Use(middleware.Logger)
+	router.Use(mwLogger.New(log))
 }
 
 func setupLogger(env string) *slog.Logger {
