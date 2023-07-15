@@ -2,10 +2,11 @@ package main
 
 import (
 	"Projects/go-url-shortener/cmd/internal/config"
+	"Projects/go-url-shortener/cmd/internal/http-server/middleware/handlers/url/save"
 	mwLogger "Projects/go-url-shortener/cmd/internal/http-server/middleware/logger"
+	"Projects/go-url-shortener/cmd/internal/lib/logger/handlers/slogpretty"
 	"Projects/go-url-shortener/cmd/internal/lib/logger/sl"
 	"Projects/go-url-shortener/cmd/internal/storage/sqlite"
-	"Projects/go-url-shortener/cmd/internal/lib/logger/handlers/slogpretty"
 	"os"
 
 	"github.com/go-chi/chi/v5"
@@ -26,7 +27,6 @@ func main() {
 
 	log.Info("starting url-shortener", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
-	log.Error("WTF WTF")
 
 	storage, err := sqlite.New(cfg.StoragePath)
 	if err != nil {
@@ -43,6 +43,8 @@ func main() {
 	router.Use(mwLogger.New(log))
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
+
+	router.Post("/url", save.New(log, storage))
 }
 
 func setupLogger(env string) *slog.Logger {
