@@ -51,11 +51,11 @@ func main() {
 	log.Info("starting server", slog.String("address", cfg.Address))
 
 	srv := &http.Server {
-		Addr: cfg.Address,
-		Handler: router,
-		ReadTimeout: cfg.HttpServer.Timeout,
+		Addr:         cfg.Address,
+		Handler:      router,
+		ReadTimeout:  cfg.HttpServer.Timeout,
 		WriteTimeout: cfg.HttpServer.Timeout,
-		IdleTimeout: cfg.HttpServer.IdleTimeout,
+		IdleTimeout:  cfg.HttpServer.IdleTimeout,
 	}
 
 	if err := srv.ListenAndServe(); err != nil {
