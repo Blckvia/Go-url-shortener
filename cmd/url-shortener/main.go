@@ -2,8 +2,8 @@ package main
 
 import (
 	"Projects/go-url-shortener/cmd/internal/config"
-	"Projects/go-url-shortener/cmd/internal/http-server/middleware/handlers/redirect"
-	"Projects/go-url-shortener/cmd/internal/http-server/middleware/handlers/url/save"
+	"Projects/go-url-shortener/cmd/internal/http-server/handlers/redirect"
+	"Projects/go-url-shortener/cmd/internal/http-server/handlers/url/save"
 	mwLogger "Projects/go-url-shortener/cmd/internal/http-server/middleware/logger"
 	"Projects/go-url-shortener/cmd/internal/lib/logger/handlers/slogpretty"
 	"Projects/go-url-shortener/cmd/internal/lib/logger/sl"
