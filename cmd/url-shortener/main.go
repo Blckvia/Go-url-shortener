@@ -50,7 +50,14 @@ func main() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 
-	router.Post("/url", save.New(log, storage))
+	router.Route("/url", func(r chi.Router) {
+		r.Use(middleware.BasicAuth("url-shortener", map[string]string{
+			cfg.HTTPServer.User: cfg.HTTPServer.Password,
+		}))
+
+		r.Post("/", save.New(log, storage))
+	})
+
 	router.Get("/{alias}", redirect.New(log, storage))
 
 	log.Info(
@@ -61,9 +68,9 @@ func main() {
 	srv := &http.Server {
 		Addr:         cfg.Address,
 		Handler:      router,
-		ReadTimeout:  cfg.HttpServer.Timeout,
-		WriteTimeout: cfg.HttpServer.Timeout,
-		IdleTimeout:  cfg.HttpServer.IdleTimeout,
+		ReadTimeout:  cfg.HTTPServer.Timeout,
+		WriteTimeout: cfg.HTTPServer.Timeout,
+		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
 	}
 
 	if err := srv.ListenAndServe(); err != nil {

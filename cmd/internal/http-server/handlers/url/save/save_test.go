@@ -12,8 +12,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	"Projects/go-url-shortener/cmd/internal/http-server/middleware/handlers/url/save"
-	"Projects/go-url-shortener/cmd/internal/http-server/middleware/handlers/url/save/mocks"
+	"Projects/go-url-shortener/cmd/internal/http-server/handlers/url/save"
+	"Projects/go-url-shortener/cmd/internal/http-server/handlers/url/save/mocks"
 	"Projects/go-url-shortener/cmd/internal/lib/logger/handlers/slogdiscard"
 )
 
