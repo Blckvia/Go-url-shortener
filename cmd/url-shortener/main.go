@@ -8,7 +8,11 @@ import (
 	"Projects/go-url-shortener/internal/lib/logger/handlers/slogpretty"
 	"Projects/go-url-shortener/internal/lib/logger/sl"
 	"Projects/go-url-shortener/internal/storage/sqlite"
+	"context"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"net/http"
 
@@ -19,8 +23,8 @@ import (
 
 const (
 	envLocal = "local"
-	envDev = "dev"
-	envProd = "prod"
+	envDev   = "dev"
+	envProd  = "prod"
 )
 
 func main() {
@@ -29,8 +33,9 @@ func main() {
 	log := setupLogger(cfg.Env)
 
 	log.Info(
-		"starting url-shortener", 
+		"starting url-shortener",
 		slog.String("env", cfg.Env),
+		slog.String("version", "123"),
 	)
 	log.Debug("debug messages are enabled")
 
@@ -39,8 +44,6 @@ func main() {
 		log.Error("failed to init storage", sl.Err(err))
 		os.Exit(1)
 	}
-
-	_ = storage
 
 	router := chi.NewRouter()
 
@@ -56,16 +59,17 @@ func main() {
 		}))
 
 		r.Post("/", save.New(log, storage))
+		// TODO: add DELETE /url/{id}
 	})
 
 	router.Get("/{alias}", redirect.New(log, storage))
 
-	log.Info(
-		"starting server", 
-		slog.String("address", cfg.Address),
-	)
+	log.Info("starting server", slog.String("address", cfg.Address))
 
-	srv := &http.Server {
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	srv := &http.Server{
 		Addr:         cfg.Address,
 		Handler:      router,
 		ReadTimeout:  cfg.HTTPServer.Timeout,
@@ -73,11 +77,30 @@ func main() {
 		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
 	}
 
-	if err := srv.ListenAndServe(); err != nil {
-		log.Error("failed to start server")
+	go func() {
+		if err := srv.ListenAndServe(); err != nil {
+			log.Error("failed to start server")
+		}
+	}()
+
+	log.Info("server started")
+
+	<-done
+	log.Info("stopping server")
+
+	// TODO: move timeout to config
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Error("failed to stop server", sl.Err(err))
+
+		return
 	}
 
-	log.Error("server stopped")
+	// TODO: close storage
+
+	log.Info("server stopped")
 }
 
 func setupLogger(env string) *slog.Logger {
@@ -91,6 +114,10 @@ func setupLogger(env string) *slog.Logger {
 			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
 		)
 	case envProd:
+		log = slog.New(
+			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
+		)
+	default: // If env config is invalid, set prod settings by default due to security
 		log = slog.New(
 			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
 		)
