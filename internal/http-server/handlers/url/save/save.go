@@ -1,10 +1,10 @@
 package save
 
 import (
-	resp "Projects/go-url-shortener/cmd/internal/lib/api/response"
-	"Projects/go-url-shortener/cmd/internal/lib/logger/sl"
-	"Projects/go-url-shortener/cmd/internal/lib/random"
-	"Projects/go-url-shortener/cmd/internal/storage"
+	resp "Projects/go-url-shortener/internal/lib/api/response"
+	"Projects/go-url-shortener/internal/lib/logger/sl"
+	"Projects/go-url-shortener/internal/lib/random"
+	"Projects/go-url-shortener/internal/storage"
 	"errors"
 	"net/http"
 

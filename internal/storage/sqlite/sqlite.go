@@ -1,7 +1,7 @@
 package sqlite
 
 import (
-	"Projects/go-url-shortener/cmd/internal/storage"
+	"Projects/go-url-shortener/internal/storage"
 	"database/sql"
 	"errors"
 	"fmt"

@@ -9,14 +9,14 @@ import (
 	"github.com/go-chi/render"
 	"golang.org/x/exp/slog"
 
-	resp "Projects/go-url-shortener/cmd/internal/lib/api/response"
-	"Projects/go-url-shortener/cmd/internal/lib/logger/sl"
-	"Projects/go-url-shortener/cmd/internal/storage"
+	resp "Projects/go-url-shortener/internal/lib/api/response"
+	"Projects/go-url-shortener/internal/lib/logger/sl"
+	"Projects/go-url-shortener/internal/storage"
 )
 
 // URLGetter is an interface for getting url by alias.
 //
-//go:generate go run github.com/vektra/mockery/v2@v2.28.2 --name=URLGetter
+//go:generate go run github.com/vektra/mockery/v2@v2.28.2 --name=URLGe
 type URLGetter interface {
 	GetURL(alias string) (string, error)
 }

@@ -1,13 +1,13 @@
 package main
 
 import (
-	"Projects/go-url-shortener/cmd/internal/config"
-	"Projects/go-url-shortener/cmd/internal/http-server/handlers/redirect"
-	"Projects/go-url-shortener/cmd/internal/http-server/handlers/url/save"
-	mwLogger "Projects/go-url-shortener/cmd/internal/http-server/middleware/logger"
-	"Projects/go-url-shortener/cmd/internal/lib/logger/handlers/slogpretty"
-	"Projects/go-url-shortener/cmd/internal/lib/logger/sl"
-	"Projects/go-url-shortener/cmd/internal/storage/sqlite"
+	"Projects/go-url-shortener/internal/config"
+	"Projects/go-url-shortener/internal/http-server/handlers/redirect"
+	"Projects/go-url-shortener/internal/http-server/handlers/url/save"
+	mwLogger "Projects/go-url-shortener/internal/http-server/middleware/logger"
+	"Projects/go-url-shortener/internal/lib/logger/handlers/slogpretty"
+	"Projects/go-url-shortener/internal/lib/logger/sl"
+	"Projects/go-url-shortener/internal/storage/sqlite"
 	"os"
 
 	"net/http"
